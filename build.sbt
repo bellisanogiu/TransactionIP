@@ -11,8 +11,8 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots")
 )
 
-//libraryDependencies += "com.github.blockcypher" % "java-client" % "0.1.2-SNAPSHOT"
-//libraryDependencies += "com.blockcypher" % "java-client" % "mvn-repo"
+//libraryDependencies += "https://repo1.maven.org/maven2/net/liftweb/lift-json_2.12/"
+libraryDependencies += "net.liftweb" %% "lift-json" % "3.0.1"
 
 libraryDependencies += "net.ruippeixotog" %% "scala-scraper" % "2.0.0"
 
@@ -46,7 +46,6 @@ libraryDependencies ++= Seq(
   "mysql" % "mysql-connector-java" % "6.0.6",
   "org.postgresql" % "postgresql" % "42.2.0",
   "com.zaxxer" % "HikariCP" % "2.7.1"
-
 )
 
 libraryDependencies += "com.chuusai" %% "shapeless" % "2.3.2"

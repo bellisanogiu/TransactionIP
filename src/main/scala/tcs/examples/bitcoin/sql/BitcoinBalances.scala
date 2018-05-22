@@ -27,10 +27,10 @@ object BitcoinBalances
 
   def main(args: Array[String]): Unit = {
     // - Bitcoind settings, retrieveInputValues set as true
-    var bitcoindSett = new BitcoinSettings("user", "password", "8332", MainNet, true)
+    var bitcoindSett = new BitcoinSettings("alice", "8ak1gI25KFTvjovL3gAM967mies3E", "8332", MainNet, true)
 
     // - MySQL database settings
-    val mySQL = new DatabaseSettings("bitcoinBalances", MySQL, "user", "password")
+    val mySQL = new DatabaseSettings("bitcoinBalances", MySQL, "alice", "Djanni74!")
 
     // - Conversion rate from satoshi to bitcoin
     val satoshiToBTC = 0.00000001

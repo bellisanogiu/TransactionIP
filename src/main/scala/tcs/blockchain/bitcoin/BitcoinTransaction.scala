@@ -9,6 +9,13 @@ import scala.collection.JavaConverters._
 import scala.collection.mutable
 
 /**
+  * imported libreries
+  */
+
+  import net.liftweb.json._
+  import scala.io.Source._
+
+/**
   * Defines a transaction of the Bitcoin blockchain.
   *
   * @param hash Transaction hash
@@ -24,6 +31,52 @@ class BitcoinTransaction(
                           val inputs: List[BitcoinInput],
                           val outputs: List[BitcoinOutput],
                           val lock_time: Long) extends TCSTransaction{
+
+  /**
+    * Returns the 'Relayed By' field representing the ip address of the node from which the explorer received the transaction.
+    *
+    *
+    * @return 'relayed by' value
+    */
+  def getIP(): Unit = {
+
+    //val url = "https://api.blockcypher.com/v1/btc/main/txs/155769484d256b39ed6851b44090048fcad3d8aba006878e3feef41a906d9977"
+    //val url = url("https://api.blockcypher.com/v1/btc/main/txs/155769484d256b39ed6851b44090048fcad3d8aba006878e3feef41a906d9977").mkString
+    //val url = fromURL("https://api.blockcypher.com/v1/btc/main/txs/155769484d256b39ed6851b44090048fcad3d8aba006878e3feef41a906d9977").mkString
+   // val result = scala.io.Source.fromURL(url).mkString
+    //val url = fromURL("https://api.blockcypher.com/v1/btc/main/txs/155769484d256b39ed6851b44090048fcad3d8aba006878e3feef41a906d9977").mkString
+
+    val url = "https://api.blockcypher.com/"
+    val protocol = "v1/"
+    val cryptomoney = "btc/"
+    val option = "main/"
+    val txs = "txs/"
+
+    // bitcoinCypher complete url
+    val urlComplete: String = url + protocol + cryptomoney + option + txs + hash
+
+    // delete
+    println(urlComplete)
+
+    case class valueRelayedBy (relayed_by: String)
+
+    implicit val formats = DefaultFormats
+
+    // convert a String to a JValue object
+    val jValue = parse(urlComplete)
+
+    // create a MailServer object from the string
+    val relayedByExtract = jValue.extract[valueRelayedBy]
+
+
+
+
+
+
+
+    }
+
+
 
 
   /**
