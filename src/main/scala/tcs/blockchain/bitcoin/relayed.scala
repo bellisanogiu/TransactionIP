@@ -2,37 +2,84 @@ import net.liftweb.json._
 import scala.util.matching._
 import scala.io.Source._
 
-// a case class to represent a mail server
 
 object JsonParsingExample extends App {
 
-  val patternIP = new Regex("([0-9]{1,3})\\.([0-9]{1,3})\\.([0-9]{1,3})\\.([0-9]{1,3})")
-
-  val ipaddress = "37.187.99.192:8333"
-
-  val ipv4 = (patternIP findAllIn ipaddress).mkString(",")
-  val apiCountry = "http://geoip.nekudo.com/api/"
-
-  val ipGetCountry: String =  apiCountry + ipv4
-
   // Country json extract
-
   case class Country (name: String, code: String)
   case class Location (accuracy_radius: Number, latitude: Number, longitude: Number, time_zone: String)
-
   case class jsonOut (city: Boolean, country:Country, location: Location, ip: String)
 
   implicit val formats = DefaultFormats
 
-  val result = fromURL(ipGetCountry).mkString
+  val patternIPv4 = new Regex("(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\.(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\.(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\.(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])")
 
-  // convert a String to a JValue object
-  val jValue = parse(result)
+  // aggiungere anche lettere minuscole fatto!
+  val patternIPv6 = new Regex("(?<![:.\\w])(?:(?:(?:[A-Fa-f0-9]{1,4}:){6}|(?=(?:[A-Fa-f0-9]{0,4}:){0,6}(?:[0-9]{1,3}\\.){3}[0-9]{1,3}(?![:.\\w]))(([0-9A-Fa-f]{1,4}:){0,5}|:)((:[0-9a-fA-F]{1,4}){1,5}:|:)|::(?:[A-Fa-f0-9]{1,4}:){5})(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])|(?:[A-Fa-f0-9]{1,4}:){7}[A-Fa-f0-9]{1,4}|(?=(?:[A-Fa-f0-9]{0,4}:){0,7}[A-Fa-f0-9]{0,4}(?![:.\\w]))(([0-9a-fA-F]{1,4}:){1,7}|:)((:[0-9a-fA-F]{1,4}){1,7}|:)|(?:[A-Fa-f0-9]{1,4}:){7}:|:(:[A-Fa-f0-9]{1,4}){7})(?![.\\w])")
 
-  // create a MailServer object from the string
-  val countryExtract = jValue.extract[jsonOut]
-  val countryName = countryExtract.country.name
+  //val ipaddress = "2a00:1450:4007:816::2003"
+  val ipaddress = "37.187.99.192:8080"
 
-  println(countryName)
+  val apiCountry = "http://geoip.nekudo.com/api/"
+
+  val ipv4 = (patternIPv4 findFirstIn ipaddress)
+  val ipGetCountry = apiCountry
+
+  if(ipv4 == None) {
+
+    println("stampa e nullo. Ip4: " + ipv4)
+
+    val ipv6 = (patternIPv6 findFirstIn ipaddress)
+    if (ipv6 == None) println("stampa e nullo. Ip6: " + ipv6)
+    else {
+      println("valore trovato. Ip6: " + ipv6.mkString)
+      val ipGetCountry: String =  apiCountry + ipv6.mkString
+      val result = fromURL(ipGetCountry).mkString
+      // convert a String to a JValue object
+      val jValue = parse(result)
+
+      // alternative method for extract country name (liftweb api)
+      //val jsearch = ((jValue \ "country") \ "name").extract[String]
+      //println(jsearch)
+
+      // method for extract country name
+      val countryExtract = jValue.extract[jsonOut]
+      val countryName = countryExtract.country.name
+
+      //println(countryExtract)
+
+      println(countryName)
+    }
+  }
+  else {
+    println("valore trovato. Ip4: ")
+    val ipGetCountry: String = apiCountry + ipv4.mkString
+    val result = fromURL(ipGetCountry).mkString
+
+    // convert a String to a JValue object
+    val jValue = parse(result)
+
+    // alternative method for extract country name (liftweb api)
+    //val jsearch = ((jValue \ "country") \ "name").extract[String]
+
+    // method for extract country name
+    val countryExtract = jValue.extract[jsonOut]
+    val countryName = countryExtract.country.name
+
+    //println(countryExtract)
+
+    println(countryName)
+
+  }
+
+
+
+
+
+
+
+  /////
+
+
 
 }

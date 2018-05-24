@@ -6,6 +6,7 @@ import tcs.blockchain.bitcoin.{BitcoinSettings, MainNet}
 import tcs.db.sql.Table
 import tcs.db.{DatabaseSettings, MySQL}
 import tcs.utils.DateConverter.convertDate
+import tcs.utils._
 
 /**
   * Created by Livio on 14/06/2017.
@@ -21,21 +22,32 @@ object Provaapi {
       create table if not exists transaction(
         txid int(10) unsigned auto_increment not null primary key,
         transactionHash varchar(256) not null,
-        blockHash varchar(256) not null,
-        timestamp TIMESTAMP not null
+        timestamp TIMESTAMP not null,
+        ipRelayedBy varchar(256),
+        country varchar(256)
       ) """,
-      sql"""insert into transaction(transactionHash, blockHash, timestamp) values (?, ?, ?)""",
+      sql"""insert into transaction(transactionHash, timestamp, ipRelayedBy, country) values (?, ?, ?, ?)""",
       mySQL)
 
-    blockchain.end(500000).foreach(block => {
+    var a = 0
+    blockchain.start(336984).end(336985).foreach(block => {
       block.txs.foreach(tx => {
 
-        txTable.insert(Seq(tx.hash.toString, block.hash.toString, convertDate(block.date)))
-        println("INIZIO")
+        //txTable.insert(Seq(tx.hash.toString, block.hash.toString, convertDate(block.date)))
+//        println("------------")
+//        println("blocco altezza " + block.height)
+//        //println("hash " + tx.hash)
+//        println("relayed by " + tx.getIP())
+//        //tx.getIP()
+//         a += 1
+//        println("--------- val " + a)
+//        Thread.sleep(1000)
 
 
-        tx.getIP()
-        println("CONCLUSO")
+      val ip = "37.187.99.192"
+        val pippo = new IP()
+        pippo.getCountry()
+
 
 
       }) // end txs
