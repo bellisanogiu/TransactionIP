@@ -45,12 +45,60 @@ class BitcoinTransaction(
     val txs = "txs/"                                  // transactions
 
     // bitcoinCypher complete url
-    //val urlComplete: String = url + protocol + coin + chain + txs // + hash.mkString
+    //val urlComplete: String = url + protocol + coin + chain + txs + hash.mkString
+    //println(urlComplete)
 
-    val urlComplete = "https://api.blockcypher.com/v1/btc/main/txs/7cf75dffcb7ab8c00a9bd3eb490aaf7920b23fe6efae1420d2f0f32ee6cc0e83"
+    //val urlComplete = "https://api.blockcypher.com/v1/btc/main/txs/cbcf51d636b02bedbcdff9b229f2ea2f20e3cb193752714c415b1752c9a0ed32" // con relayed by
+    val urlComplete = "https://api.blockcypher.com/v1/btc/main/txs/6961d06e4a921834bbf729a94d7ab423b18ddd92e5ce9661b7b871d852f1db74" // senza relayed by
     val jsonFromUrl = fromURL(urlComplete).mkString
 
-    //case class valueRelayedBy (relayed_by: String)
+    case class valueRelayedBy (relayed_by: String)
+
+    // val format
+    implicit val formats = DefaultFormats
+
+    // convert a String to a JValue object
+    val jValue = parse(jsonFromUrl)
+    println(jValue)
+
+    // extract the value 'Relayed By' as a JObject
+    val relayedByExtract = jValue.extract[valueRelayedBy]
+    println(relayedByExtract)
+
+    // alternative method for extract country name (liftweb api)
+    //val jsearch = (jValue \ "relayed_by").extract[valueRelayedBy]
+    //println(jsearch)
+
+    //return relayedByExtract.toString
+    }
+
+  def getIP2(): String = {
+
+
+    // Almost all resources exist under a given blockchain, and follow this pattern
+    val url = "https://api.blockcypher.com/"          // url
+    val protocol = "v1/"                              // blockcypher API version
+    val coin = "btc/"                                 // coin
+    val chain = "main/"                               // chain
+    val txs = "txs/"                                  // transactions
+
+    // bitcoinCypher complete url
+    val urlComplete: String = url + protocol + coin + chain + txs + hash.mkString
+    //println(urlComplete)
+
+    //val urlComplete = "https://api.blockcypher.com/v1/btc/main/txs/fe6c48bbfdc025670f4db0340650ba5a50f9307b091d9aaa19aa44291961c69f" // con relayed by
+    //val urlComplete = "https://api.blockcypher.com/v1/btc/main/txs/ee475443f1fbfff84ffba43ba092a70d291df233bd1428f3d09f7bd1a6054a1f" // senza relayed by
+    val jsonFromUrl = fromURL(urlComplete).mkString
+
+    case class valueRelayedBy (relayed_by: String)
+
+    /**
+      * nuovo case class json
+      */
+
+      case class root(block_hash: String, block_height: Number, block_index: Number, hash: String, addresses: Array[String], total: Number, fees: Number, size: Number,preference: String,
+                      relayed_by: String, confirmed: String, received: String, ver: Number, double_spend: Boolean, vin_sz: Number, vout_sz: Number, confirmations: Number,
+                      confidence: Number, inpunts: Array[Object], outputs: Array[Object])
 
     // val format
     implicit val formats = DefaultFormats
@@ -64,11 +112,19 @@ class BitcoinTransaction(
     //println(relayedByExtract)
 
     // alternative method for extract country name (liftweb api)
-    val jsearch = (jValue \ "relayed_by").extract[String]
-    println(jsearch)
-
-    //return relayedByExtract.toString
+    //val jsearch = (jValue \\ "relayed_by").extract[valueRelayedBy]
+    //val jsearch = ((jValue \ "country") \ "name").extract[String]
+    var jsearch = (jValue \\ "relayed_by").children //.extract[String]
+    //println(jsearch)
+    if (jsearch.isEmpty == true) {
+      return "nothing ip"
     }
+    else {
+     var jsearch = (jValue \ "relayed_by").extract[String]
+      return jsearch
+    }
+
+  }
 
   /**
     * Returns the sum of all the input values.
